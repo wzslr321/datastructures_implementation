@@ -1,6 +1,3 @@
-//
-// DELETION HAS TO BE IMPLEMENTED !!
-//
 #include <cstdlib>
 #include <iostream>
 
@@ -174,14 +171,13 @@ class red_black_tree {
     }
   }
 
+  // needs to be implemented
   void remove(int value) {
     auto node = find_node(root, value);
     if (!node) return;
     std::cout << node->value << '\n';
   }
 };
-
-void display(const Node *node);
 
 auto main() -> int {
   red_black_tree tree{};
@@ -190,48 +186,5 @@ auto main() -> int {
     tree.insert(i);
   }
 
-  tree.remove(10);
-
-  display(tree.get_root());
-
   return 0;
-}
-
-// Print related stuff below;
-
-void print_node(const Node *node) {
-  std::cout << "Value: " << node->value << '\t';
-  std::cout << "Left Child: ";
-  if (node->left != nullptr) {
-    std::cout << node->left->value << '\t';
-  } else {
-    std::cout << node->left << '\t';
-  }
-  std::cout << "Right child: ";
-  if (node->right != nullptr) {
-    std::cout << node->right->value << '\t';
-  } else {
-    std::cout << node->right << '\t';
-  }
-  std::cout << "Parent: ";
-  if (node->parent != nullptr) {
-    std::cout << node->parent->value << '\t';
-  } else {
-    std::cout << node->parent << '\t';
-  }
-  std::cout << "Color: " << (node->color == 'r' ? "red" : "black") << '\n';
-}
-
-void display(const Node *node) {
-  if (!node) {
-    std::cout << "Tree is empty\n";
-    return;
-  }
-  print_node(node);
-  if (node->left) {
-    display(node->left);
-  }
-  if (node->right) {
-    display(node->right);
-  }
 }
