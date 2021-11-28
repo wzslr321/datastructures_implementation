@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 
 struct Node {
   int value;
@@ -31,31 +32,24 @@ class linked_list {
   }
 
   void insert(int val) {
-    auto node = new Node(val);
-    node->next = head;
+    auto node = new Node(val, head);
     head = node;
     if (!tail) tail = node;
   }
 
   void insert_at(int position, int val) {
-    // this shit needs refactor i guess
-    if (position < 2) {
-      insert(val);
-      return;
-    }
+    if (position <= 1) return insert(val);
+
     auto previous = new Node();
     auto current = new Node();
     current = head;
     for (int i = 0; i < position; ++i) {
-      previous = current;
-      current = current->next;
-      if (!current) {
-        push_back(val);
-        return;
-      };
+      std::exchange(previous, current);
+      std::exchange(current, current->next);
+
+      if (!current) return push_back(val);
     }
     auto node = new Node(val, current);
-    node->value = val;
     previous->next = node;
   }
 
@@ -81,10 +75,8 @@ class linked_list {
     delete tmp;
   }
   void delete_at(int position) {
-    if (position < 2) {
-      pop_front();
-      return;
-    }
+    if (position <= 1) return pop_front();
+
     auto previous = new Node();
     auto current = new Node();
     auto tmp = new Node();
@@ -92,24 +84,13 @@ class linked_list {
     for (int i = 1; i < position; ++i) {
       previous = current;
       current = current->next;
-      if (!current->next) {
-        pop_back();
-        return;
-      }
+
+      if (!current->next) return pop_back();
     }
     tmp = current;
     previous->next = current->next;
     delete current;
-  }
-
-  void display() {
-    auto node = new Node();
-    node = head;
-    while (node) {
-      printf("%d ", node->value);
-      node = node->next;
-    }
-    printf("\n");
+    delete previous;
   }
 };
 
@@ -125,6 +106,6 @@ int main() {
   list.push_back(5);
   list.pop_back();
   list.delete_at(43);
-  list.display();
+
   return 0;
 }
