@@ -1,142 +1,130 @@
-#include <bits/stdc++.h>
+#include <iostream>
 
-template <typename T>
-struct node {
-    T data;
-    struct node* next;
+struct Node {
+  int value;
+  struct Node *next;
+  Node() : value(0), next(nullptr) {}
+  Node(int val, Node *next) : value(val), next(next) {}
+  explicit Node(int val) : value(val), next(nullptr) {}
 };
 
-template <typename T>
 class linked_list {
-   private:
-    node<T>* head;
-    node<T>* tail;
+ private:
+  Node *head;
+  Node *tail;
 
-   public:
-    linked_list() {
-        head = NULL;
-        tail = NULL;
+ public:
+  linked_list() {
+    head = nullptr;
+    tail = nullptr;
+  }
+
+  void push_back(int val) {
+    auto node = new Node(val);
+    if (!head) {
+      head = node;
+      tail = node;
+    } else {
+      tail->next = node;
+      tail = node;
     }
+  }
 
-    void push_back(T val) {
-        auto tmp{new node<T>};
-        tmp->data = val;
-        tmp->next = NULL;
-        if (head == NULL) {
-            head = tmp;
-            tail = tmp;
-        } else {
-            tail->next = tmp;
-            tail = tmp;
-        }
+  void insert(int val) {
+    auto node = new Node(val);
+    node->next = head;
+    head = node;
+    if (!tail) tail = node;
+  }
+
+  void insert_at(int position, int val) {
+    // this shit needs refactor i guess
+    if (position < 2) {
+      insert(val);
+      return;
     }
-
-    void insert(T val) {
-        auto tmp{new node<T>};
-        tmp->data = val;
-        tmp->next = head;
-        head = tmp;
-        if (tail == NULL) {
-            tail = tmp;
-        }
+    auto previous = new Node();
+    auto current = new Node();
+    current = head;
+    for (int i = 0; i < position; ++i) {
+      previous = current;
+      current = current->next;
+      if (!current) {
+        push_back(val);
+        return;
+      };
     }
+    auto node = new Node(val, current);
+    node->value = val;
+    previous->next = node;
+  }
 
-    void insert_at(int position, T val) {
-        if (position < 2) {
-            insert(val);
-            return;
-        }
-        auto previous{new node<T>};
-        auto current{new node<T>};
-        auto tmp{new node<T>};
-        current = head;
-        for (auto i{1}; i < position; ++i) {
-            previous = current;
-            current = current->next;
-            if (current == NULL) {
-                push_back(val);
-                return;
-            };
-        }
-        tmp->data = val;
-        previous->next = tmp;
-        tmp->next = current;
+  void pop_front() {
+    auto tmp = new Node();
+    tmp = head;
+    head = head->next;
+    delete tmp;
+  }
+
+  void pop_back() {
+    auto previous = new Node();
+    auto current = new Node();
+    auto tmp = new Node();
+    current = head;
+    while (current->next) {
+      previous = current;
+      current = current->next;
     }
-
-    void pop_front() {
-        /*
-         * It can be done only with / head = head->next \
-         * because of memory leaks, previous head would still
-         * be out there in the memory. We have to keep track of it
-         * in order to delete it after updating the head.
-         */
-
-        auto tmp{new node<T>};
-        tmp = head;
-        head = head->next;
-        delete tmp;
+    tmp = previous->next;
+    previous->next = nullptr;
+    tail = previous;
+    delete tmp;
+  }
+  void delete_at(int position) {
+    if (position < 2) {
+      pop_front();
+      return;
     }
-
-    void pop_back() {
-        auto previous{new node<T>};
-        auto current{new node<T>};
-        auto tmp{new node<T>};
-        current = head;
-        while (current->next != NULL) {
-            previous = current;
-            current = current->next;
-        }
-        tmp = previous->next;
-        previous->next = NULL;
-        tail = previous;
-        delete tmp;
+    auto previous = new Node();
+    auto current = new Node();
+    auto tmp = new Node();
+    current = head;
+    for (int i = 1; i < position; ++i) {
+      previous = current;
+      current = current->next;
+      if (!current->next) {
+        pop_back();
+        return;
+      }
     }
+    tmp = current;
+    previous->next = current->next;
+    delete current;
+  }
 
-    void delete_at(int position) {
-        if (position < 2) {
-            pop_front();
-            return;
-        }
-        auto previous{new node<T>};
-        auto current{new node<T>};
-        auto tmp{new node<T>};
-        current = head;
-        for (auto i{1}; i < position; ++i) {
-            previous = current;
-            current = current->next;
-            if (current->next == NULL) {
-                pop_back();
-                return;
-            }
-        }
-        tmp = current;
-        previous->next = current->next;
-        delete current;
+  void display() {
+    auto node = new Node();
+    node = head;
+    while (node) {
+      printf("%d ", node->value);
+      node = node->next;
     }
-
-    void display() {
-        auto tmp{new node<T>};
-        tmp = head;
-        while (tmp != NULL) {
-            printf("%d ", tmp->data);
-            tmp = tmp->next;
-        }
-        printf("\n");
-    }
+    printf("\n");
+  }
 };
 
 int main() {
-    linked_list<int> list;
-    list.insert(3);
-    list.push_back(5);
-    list.insert_at(-3, 2);
-    list.insert_at(7, 8);
-    list.insert_at(8, 9);
-    list.pop_front();
-    list.push_back(7);
-    list.push_back(5);
-    list.pop_back();
-    list.delete_at(43);
-    list.display();
-    return 0;
+  linked_list list;
+  list.insert(3);
+  list.push_back(5);
+  list.insert_at(-3, 2);
+  list.insert_at(7, 8);
+  list.insert_at(8, 9);
+  list.pop_front();
+  list.push_back(7);
+  list.push_back(5);
+  list.pop_back();
+  list.delete_at(43);
+  list.display();
+  return 0;
 }
