@@ -2,26 +2,24 @@
 #include <iostream>
 #include <vector>
 
+// Least significant bit
 #define LSB(i) ((i) & -(i))
 
 struct fenwick_tree {
  private:
-  int n;
   std::vector<int> tree;
+  int N;
 
  public:
-  fenwick_tree() { n = 0; }
-  explicit fenwick_tree(int sz, std::vector<int> values) {
-    tree.reserve(sz);
+  explicit fenwick_tree(std::vector<int> values) {
     if (values.size() < 1) return;
-    auto N = values.size();
+    N = values.size();
     values[0] = 0;
 
     tree = values;
 
     for (int i = 1; i < N; ++i) {
-      int parent = i + LSB(i);
-      if (parent < N) tree[parent] += tree[i];
+      if (i + LSB(i) < N) tree[i + LSB(i)] += tree[i];
     }
   }
 
@@ -36,20 +34,29 @@ struct fenwick_tree {
     return prefix_sum(right) - prefix_sum(left - 1);
   }
 
-  auto get_vector() -> std::vector<int> { return tree; }
+  auto get_at(int i) -> int64_t { return sum(i, i); }
+
+  auto add_at(int i, int val) -> void {
+    while (i < N) {
+      tree[i] += val;
+      i += LSB(i);
+    }
+  }
+
+  auto set_to(int i, int val) -> void { add_at(i, val - sum(i, i)); }
 };
 
 auto main() -> int {
-  // must be zero based
-  std::vector<int> values{0, 5, 4, -3, 8, 1, 2};
+  // must be one based
+  std::vector<int> values{0, 5, 4, 12, 8, 1, 2};
 
-  fenwick_tree fwt(7, values);
-  auto vec = fwt.get_vector();
-  for (size_t i = 1; i < vec.size(); ++i) {
-    std::cout << vec[i] << ' ';
-  }
+  fenwick_tree fwt(values);
 
-  std::cout << '\n';
+  std::cout << "Before set: " << fwt.prefix_sum(6) << '\n';
+  fwt.set_to(3, 0);
+  std::cout << fwt.get_at(3) << '\n';
+  std::cout << "After set: " << fwt.prefix_sum(6) << '\n';
+  std::cout << "Sum: <2,4): " << fwt.sum(2, 6) << '\n';
 
   return EXIT_SUCCESS;
 }
