@@ -29,53 +29,44 @@ struct LinkedList {
     tail: Option<Box<Node>>,
 }
 
-impl<'a> LinkedList {
-    fn get_head(&self) -> &Option<Box<Node>> {
-        match &self.head {
-            Some(node) => {
-                println!("Head: {:?}", node);
-            }
-            None => {
-                println!("Linked list is empty");
-            }
-        }
-        &self.head
-    }
-
-    fn get_tail(&self) -> &Option<Box<Node>> {
-        match &self.tail {
-            Some(node) => {
-                println!("Tail: {:?}", node);
-            }
-            None => {
-                println!("There ain't no tail bruh");
-            }
-        }
-        &self.tail
-    }
-
+impl LinkedList {
     pub fn push_back(&mut self, value: i32) {
-        let mut new_node = Node::new(value);
+        let new_node = Box::new(Node::new(value));
 
-        match self.head {
+        match &self.tail {
             Some(_) => {
-                swap(&mut Some(Box::new(new_node)), &mut self.tail);
+                // swap(&mut Some(Box::new(new_node_2)), &mut self.tail);
+                {
+                    // tail.next = Some(new_node);
+                }
             }
             None => {
-                self.head = Some(Box::new(new_node.clone()));
-                self.tail = Some(Box::new(new_node.clone()));
+                self.head = Some(new_node.clone());
+                self.tail = Some(new_node.clone());
             }
         }
     }
 }
 
-
 fn main() {
     let mut ll: LinkedList = LinkedList { head: None, tail: None };
-    ll.get_head();
     ll.push_back(5);
-    ll.get_head();
-    ll.push_back(3);
-    ll.get_head();
-    ll.get_tail();
+    let actual: String = scan_list(&ll).map(|node| format!("{:?}\n", node)).collect();
+    println!("{:?}", actual);
+}
+
+fn scan_list(list: &LinkedList) -> impl Iterator<Item=Node> {
+    let mut current_node = list.head.clone();
+
+    std::iter::from_fn(move || {
+        match current_node.clone() {
+            None => {
+                None
+            }
+            Some(node) => {
+                current_node = node.clone().next;
+                Some(node.as_ref().clone())
+            }
+        }
+    })
 }
