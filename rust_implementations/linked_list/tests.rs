@@ -11,7 +11,7 @@ mod tests {
 
     #[test]
     fn test_empty_list() {
-        let list = LinkedList { head: None, tail: None };
+        let list = LinkedList { head: None };
         test_list(
             &list,
             expect![r#""#],
@@ -20,7 +20,7 @@ mod tests {
 
     #[test]
     fn test_list_with_single_node() {
-        let list = LinkedList { head: Some(Box::new(Node::new(5))), tail: None };
+        let list = LinkedList { head: Some(Box::new(Node::new(5)))};
         test_list(
             &list,
             expect![r#"
@@ -31,14 +31,30 @@ mod tests {
 
     #[test]
     fn test_list_with_two_nodes() {
-        let mut list = LinkedList { head: None, tail: None };
+        let mut list = LinkedList { head: None };
         list.push_back(5);
         list.push_back(3);
         test_list(
             &list,
             expect![r#"
-                 Node { value: 5, next: Node { value: 3, next: None } }
+                 Node { value: 5, next: Some(Node { value: 3, next: None }) }
                  Node { value: 3, next: None }
+            "#],
+        )
+    }
+
+    #[test]
+    fn test_list_with_three_nodes() {
+        let mut list = LinkedList { head: None };
+        list.push_back(5);
+        list.push_back(3);
+        list.push_back(8);
+        test_list(
+            &list,
+            expect![r#"
+                 Node { value: 5, next: Some(Node { value: 3, next: Some(Node { value: 8, next: None }) }) }
+                 Node { value: 3, next: Some(Node { value: 8, next: None }) }
+                 Node { value: 8, next: None }
             "#],
         )
     }
