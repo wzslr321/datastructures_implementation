@@ -28,4 +28,18 @@ mod tests {
             "#],
         )
     }
+
+    #[test]
+    fn test_list_with_two_nodes() {
+        let mut list = LinkedList { head: None, tail: None };
+        list.push_back(5);
+        list.push_back(3);
+        test_list(
+            &list,
+            expect![r#"
+                 Node { value: 5, next: Node { value: 3, next: None } }
+                 Node { value: 3, next: None }
+            "#],
+        )
+    }
 }

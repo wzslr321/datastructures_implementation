@@ -1,9 +1,8 @@
 mod tests;
 
 use std::fmt;
-use std::mem::swap;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 struct Node {
     value: i32,
     next: Option<Box<Node>>,
@@ -26,31 +25,41 @@ impl Node {
 
 struct LinkedList {
     head: Option<Box<Node>>,
-    tail: Option<Box<Node>>,
 }
+
+
+fn navigate(mut node: Option<&mut Box<Node>>, value: i32) {
+    let ref mut n = node.unwrap();
+    if n.clone().next != None {
+        navigate(n.next.as_mut(), value)
+    } else {
+        n.next = Some(Box::new(Node::new(value)));
+    }
+}
+
 
 impl LinkedList {
     pub fn push_back(&mut self, value: i32) {
-        let new_node = Box::new(Node::new(value));
-
-        match &self.tail {
-            Some(_) => {
-                // swap(&mut Some(Box::new(new_node_2)), &mut self.tail);
-                {
-                    // tail.next = Some(new_node);
+        match self.head {
+            Some(ref mut node) => {
+                if node.next != None {
+                    navigate(node.next.as_mut(), value)
+                } else {
+                    node.next = Some(Box::new(Node::new(value)));
                 }
             }
             None => {
-                self.head = Some(new_node.clone());
-                self.tail = Some(new_node.clone());
+                self.head = Some(Box::new(Node::new(value)));
             }
         }
     }
 }
 
 fn main() {
-    let mut ll: LinkedList = LinkedList { head: None, tail: None };
+    let mut ll: LinkedList = LinkedList { head: None };
     ll.push_back(5);
+    ll.push_back(3);
+    ll.push_back(2);
     let actual: String = scan_list(&ll).map(|node| format!("{:?}\n", node)).collect();
     println!("{:?}", actual);
 }
